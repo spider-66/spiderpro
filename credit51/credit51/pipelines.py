@@ -44,8 +44,9 @@ class Credit51MysqlPipeline(object):
         self.con = pymysql.connect(host=self.host, port=self.port, user=self.user, password=self.password, db=self.db,
                                    charset=self.charset)
         self.cursor = self.con.cursor()
-        self.table = 'tablepid271'
-        self.table1 = 'credititem271'
+        self.table = 'tablepid288'
+        self.table1 = 'credititem288'
+        self.table_cid='cid288'
         try:
             self.cursor.execute('select * from {}'.format(self.table))
         except Exception as e:
@@ -57,13 +58,23 @@ class Credit51MysqlPipeline(object):
                     'create table {}(id int primary key auto_increment,pid varchar(30),cid varchar(30),post_posi varchar(50),com_posi varchar (50)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
                         self.table1))
 
+        try:
+            self.cursor.execute('select * from {} limit 2'.format(self.table_cid))
+        except Exception as e:
+            if e[-1] == u"Table '{}.{}' doesn't exist".format(self.db, self.table_cid):
+                self.cursor.execute(
+                    'create table {}(id int primary key auto_increment,cid varchar(30) unique ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
+                        self.table_cid))
+
+
+
     def process_item(self, item, spider):
         if self.pid_isexist(item['pid']):
             sql = 'update {} set latest_time="{}" where pid="{}"'.format(self.table, item['new_cmt_tim'], item['pid'])
         else:
             sql = 'insert into {} (pid, latest_time,post_posi) value("{}", "{}","{}")'.format(self.table, item['pid'],
                                                                                               item['new_cmt_tim'],
-                                                                                              item['post_posi'])
+                                                                                      item['post_posi'])
         try:
             self.cursor.execute(sql)
             self.con.commit()
@@ -79,6 +90,16 @@ class Credit51MysqlPipeline(object):
 
         self.cursor.execute(sql_insert)
         self.con.commit()
+
+        sql_insert_cid = 'insert into {} (cid) value("{}")'.format(self.table_cid, item['cid'])
+        try:
+            self.cursor.execute(sql_insert_cid)
+            self.con.commit()
+        except:
+            self.con.rollback()
+
+
+
 
         return item
 
@@ -96,3 +117,8 @@ class Credit51MysqlPipeline(object):
             **locals())
         result = self.cursor.execute(sql_select_pid)
         return not bool(result)
+
+    def cid_isexist(self, cid):
+        sql_select_cid = 'select cid from {self.table_cid} where cid="{cid}"'.format(**locals())
+        result = self.cursor.execute(sql_select_cid)
+        return bool(result)

@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
-str1=u'qw-1.2ef'
-print str1.split('-')[-1].split('.')[0]
+str1='https://bbs.51credit.com/thread-4593973-1-1.html'
+str2='https://bbs.51credit.com/forum.php?mod=viewthread&tid=4593973'
+print '-' in str2

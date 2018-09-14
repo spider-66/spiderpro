@@ -14,7 +14,7 @@ def get_allpart_indexurl(start_url):
 
     response = requests.get(url=start_url, headers=headers)
     # start_url_list = re.findall('forum-\d+-\d\.html', response.text)
-    start_url_list = re.findall('forum-271-1\.html', response.text)
+    start_url_list = re.findall('forum-288-1\.html', response.text)
     start_url_list=['https://bbs.51credit.com/'+base_url for base_url in start_url_list]
     start_urls=list(set(start_url_list))
 

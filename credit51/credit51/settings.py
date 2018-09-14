@@ -72,7 +72,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 # ---------------------------------item管道-----------------------------
 ITEM_PIPELINES = {
-    # 'credit51.pipelines.Credit51Pipeline': 300,
+    'credit51.pipelines.Credit51Pipeline': 400,
     'credit51.pipelines.Credit51MysqlPipeline': 302,
 }
 
