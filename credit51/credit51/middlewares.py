@@ -123,11 +123,11 @@ class RandomProxyIpDownloaderMiddleware(object):
 
     def process_request(self, request, spider):
         proxy_ip = self.ip.get_ip().strip()
-        list_ = proxy_ip.split('://')
-        proxy = {
-            list_[0]: list_[1]
-        }
-        request.meta['proxies'] = proxy
+        # list_ = proxy_ip.split('://')
+        # proxy = {
+        #     list_[0]: list_[1]
+        # }
+        request.meta['proxy'] = proxy_ip
         self.logger.debug('------------use random proxyip:{}-------------'.format(proxy_ip))
 
         return None

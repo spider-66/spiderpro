@@ -44,9 +44,9 @@ class Credit51MysqlPipeline(object):
         self.con = pymysql.connect(host=self.host, port=self.port, user=self.user, password=self.password, db=self.db,
                                    charset=self.charset)
         self.cursor = self.con.cursor()
-        self.table = 'tablepid288'
-        self.table1 = 'credititem288'
-        self.table_cid='cid288'
+        self.table = 'tablepid290'
+        self.table1 = 'credititem290'
+        self.table_cid='cid290'
         try:
             self.cursor.execute('select * from {}'.format(self.table))
         except Exception as e:
@@ -63,7 +63,7 @@ class Credit51MysqlPipeline(object):
         except Exception as e:
             if e[-1] == u"Table '{}.{}' doesn't exist".format(self.db, self.table_cid):
                 self.cursor.execute(
-                    'create table {}(id int primary key auto_increment,cid varchar(30) unique ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
+                    'create table {}(cid int unique ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
                         self.table_cid))
 
 
@@ -91,7 +91,7 @@ class Credit51MysqlPipeline(object):
         self.cursor.execute(sql_insert)
         self.con.commit()
 
-        sql_insert_cid = 'insert into {} (cid) value("{}")'.format(self.table_cid, item['cid'])
+        sql_insert_cid = 'insert into {} (cid) value("{}")'.format(self.table_cid, int(item['cid']))
         try:
             self.cursor.execute(sql_insert_cid)
             self.con.commit()
@@ -119,6 +119,7 @@ class Credit51MysqlPipeline(object):
         return not bool(result)
 
     def cid_isexist(self, cid):
-        sql_select_cid = 'select cid from {self.table_cid} where cid="{cid}"'.format(**locals())
-        result = self.cursor.execute(sql_select_cid)
+        sql_cid = 'INSERT INTO {self.table_cid} (cid) SELECT {cid} FROM dual WHERE not exists (select * from {self.table_cid} where {self.table_cid}.cid = {cid});'.format(**locals())
+        result = self.cursor.execute(sql_cid)
+        # 存在返回0，不存在返回1并插入
         return bool(result)

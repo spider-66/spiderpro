@@ -171,5 +171,8 @@ class Credit51spiderSpider(scrapy.spiders.CrawlSpider):
             item['cid'] = cid
             item['flr'] = flr
             item['com_posi'] = com_posi
-            if not self.db_handler.cid_isexist(cid):
-                yield item
+
+            if cid.isdigit():
+                cid_int=int(cid)
+                if self.db_handler.cid_isexist(cid_int):
+                    yield item

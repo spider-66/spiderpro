@@ -12,8 +12,8 @@ def get_filepath(conmentid):
     nowTime = datetime.datetime.now().strftime('%Y-%m-%d')
 
     # 文件存放一级目录
-    # file_path1 = os.path.join('/Users/wulian/Documents/repertory/radarx/projects', 'files')
-    file_path1 = BASE_DIR+'/'+SQL_NAME
+    file_path1 = os.path.join('/Users/wulian/Documents/wlcode/spiderprojects/spiderpros/credit51', 'files')
+    # file_path1 = BASE_DIR+'/'+SQL_NAME
 
     if not os.path.exists(file_path1):
         os.mkdir(file_path1)

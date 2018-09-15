@@ -42,7 +42,7 @@ ROBOTSTXT_OBEY = True
 # DOWNLOAD_DELAY = 3
 
 # ---------------------------------多线程并发------------------------------
-# CONCURRENT_REQUESTS = 32                      # 并发请求数 默认16
+CONCURRENT_REQUESTS = 32                      # 并发请求数 默认16
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16            # 每个网域并发请求线程数
 # CONCURRENT_REQUESTS_PER_IP = 16                # 每个ip并发请求数
 
@@ -64,7 +64,7 @@ DEFAULT_REQUEST_HEADERS = {
 
 # ---------------------------------下载中间件-----------------------------
 DOWNLOADER_MIDDLEWARES = {
-    'credit51.middlewares.Credit51DownloaderMiddleware': 543,
+    # 'credit51.middlewares.Credit51DownloaderMiddleware': 543,
     'credit51.middlewares.RandomProxyIpDownloaderMiddleware': 542,
     'credit51.middlewares.RandomUserAgentDownloaderMiddleware': 541,
 
@@ -72,8 +72,8 @@ DOWNLOADER_MIDDLEWARES = {
 
 # ---------------------------------item管道-----------------------------
 ITEM_PIPELINES = {
-    'credit51.pipelines.Credit51Pipeline': 400,
-    'credit51.pipelines.Credit51MysqlPipeline': 302,
+    # 'credit51.pipelines.Credit51Pipeline': 302,
+    # 'credit51.pipelines.Credit51MysqlPipeline': 400,
 }
 
 
