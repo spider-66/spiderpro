@@ -7,8 +7,7 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
-import time
-
+from wordcloud import WordCloud
 import pymysql
 
 from .assisted.get_filepath import get_filepath
@@ -123,3 +122,20 @@ class Credit51MysqlPipeline(object):
         result = self.cursor.execute(sql_cid)
         # 存在返回0，不存在返回1并插入
         return bool(result)
+
+
+class SinaTechPipeline(object):
+
+    def process_item(self, item, spider):
+        wc = WordCloud(
+            background_color="white",
+            max_words=200,
+            min_font_size=15,
+            max_font_size=50,
+            width=400
+        )
+        wc.generate(item['keyword'] if item['keyword'] else u'暂无关键字')
+        wc.to_file("%s.png"%item['title'])
+        return item
+
+

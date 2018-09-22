@@ -39,3 +39,8 @@ class Credit51Item(scrapy.Item):
     def get_key_list(cls):
         dict_field = cls.__dict__['fields']
         return [key for key in dict_field]
+
+class SinaTechItem(scrapy.Item):
+    title = scrapy.Field()
+    date = scrapy.Field()
+    keyword = scrapy.Field()

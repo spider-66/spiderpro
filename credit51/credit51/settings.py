@@ -65,7 +65,7 @@ DEFAULT_REQUEST_HEADERS = {
 # ---------------------------------下载中间件-----------------------------
 DOWNLOADER_MIDDLEWARES = {
     # 'credit51.middlewares.Credit51DownloaderMiddleware': 543,
-    'credit51.middlewares.RandomProxyIpDownloaderMiddleware': 542,
+    # 'credit51.middlewares.RandomProxyIpDownloaderMiddleware': 542,
     'credit51.middlewares.RandomUserAgentDownloaderMiddleware': 541,
 
 }
@@ -74,6 +74,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     # 'credit51.pipelines.Credit51Pipeline': 302,
     # 'credit51.pipelines.Credit51MysqlPipeline': 400,
+    'credit51.pipelines.SinaTechPipeline': 400,
 }
 
 
