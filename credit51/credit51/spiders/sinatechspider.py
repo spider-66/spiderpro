@@ -22,7 +22,7 @@ class SinatechspiderSpider(CrawlSpider):
         contents_list=response.xpath('//div[@id="artibody"]//text()').extract()
         content=''.join(contents_list)
 
-        keyword=''.join(analyse.extract_tags(content,topK=20))
+        keyword=' '.join(analyse.extract_tags(content,topK=20))
 
         item['title']=title
         item['date']=date

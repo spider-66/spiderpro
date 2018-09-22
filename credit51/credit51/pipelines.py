@@ -125,17 +125,19 @@ class Credit51MysqlPipeline(object):
 
 
 class SinaTechPipeline(object):
-
-    def process_item(self, item, spider):
-        wc = WordCloud(
+    def __init__(self):
+        self.wc = WordCloud(
             background_color="white",
             max_words=200,
             min_font_size=15,
             max_font_size=50,
-            width=400
+            width=400,
+            font_path = 'Hiragino Sans GB.ttc'
         )
-        wc.generate(item['keyword'] if item['keyword'] else u'暂无关键字')
-        wc.to_file("%s.png"%item['title'])
+    def process_item(self, item, spider):
+
+        tags=item['keyword'] if item['keyword'] else u'暂无关键字'
+        print tags
+        self.wc.generate(tags)
+        self.wc.to_file("credit51/credit51/ciyun_pngs/%s.png"%item['title'][:9])
         return item
-
-
