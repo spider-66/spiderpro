@@ -15,7 +15,8 @@ class ProxyIp(object):
         'User-Agent': "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
     }
     base_url = 'http://www.xicidaili.com/nn/{}'
-    test_url = 'https://www.baidu.com'
+    testhttps_url = 'https://www.baidu.com/'
+
 
     mysql_host = '127.0.0.1'
     mysql_port = 3306
@@ -31,11 +32,11 @@ class ProxyIp(object):
                                    password=self.mysql_password, db=self.db_name, charset=self.charset)
         self.cursor = self.con.cursor()
         try:
-            self.cursor.execute('select * from {} limit 10'.format(self.table_name))
+            self.cursor.execute('select * from {} limit 1'.format(self.table_name))
         except Exception as e:
             if e[-1] == u"Table '{}.{}' doesn't exist".format(self.db_name, self.table_name):
                 self.cursor.execute(
-                    'create table {}(id int primary key auto_increment,proxyip varchar(30) unique ,isvalid boolean default true ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
+                    'create table {}(id int primary key auto_increment,proxyip varchar(30) unique,isvalid boolean default true ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'.format(
                         self.table_name))
         if logger:
             self.logger = logger
@@ -43,12 +44,16 @@ class ProxyIp(object):
             self.logger = logging.getLogger(__name__)
 
     def check_url(self, key):
-        index = key.find(':')
         proxies = {
-            key[:index]: key[index + 1:]
+            'https':key
         }
-        response1 = requests.get(url=self.test_url, headers=self.headers, proxies=proxies)
-        return True if response1.status_code == 200 else False
+        url=self.testhttps_url
+        try:
+            response1 = requests.get(url=url, headers=self.headers, proxies=proxies,timeout=5)
+            return True if response1.status_code == 200 else False
+        except Exception as e:
+            print e
+            return False
 
     def to_mysql(self, page_start, page_end):
         for i in range(page_start, page_end + 1):
@@ -60,7 +65,7 @@ class ProxyIp(object):
             for tr in tr_list[1:]:
                 ip = tr.xpath('./td[2]/text()')[0]
                 port = tr.xpath('./td[3]/text()')[0]
-                style = tr.xpath('./td[6]/text()')[0]
+                style = tr.xpath('./td[6]/text()')[0].lower()
                 key = style + '://' + ip + ':' + port
                 if not self.ip_isexist(key):
                     if self.check_url(key):
@@ -83,10 +88,13 @@ class ProxyIp(object):
         LIMIT=100
         while True:
             tasks = []
-            for i in range(8):
+            for i in range(4):
+                self.con.ping(reconnect=True)
                 sql_getall = 'select proxyip from {} limit {} offset {} '.format(self.table_name, LIMIT,LIMIT * counter)
+                print sql_getall
                 self.cursor.execute(sql_getall)
                 results = self.cursor.fetchall()
+                print results
                 if not results:
                     break
                 counter += 1
@@ -102,13 +110,17 @@ class ProxyIp(object):
         self.logger.info("update worker start")
         for ip, in results:
             if not self.check_url(ip):
-                sql_delete = 'update from {} set isvalid=0 where proxyip="{}"'.format(self.table_name, ip)
+                sql_delete = 'update {} set isvalid=0 where proxyip="{}"'.format(self.table_name, ip)
                 try:
+                    print sql_delete
+                    self.con.ping(reconnect=True)
                     self.cursor.execute(sql_delete)
-                    self.logger.debug('update invalid ip：%s' % ip)
+                    # self.logger.debug('update invalid ip：%s' % ip)
                     self.con.commit()
                 except Exception as e:
+                    print e
                     self.logger.debug('Error:%s' % e)
+                    self.con.ping(reconnect=True)
                     self.con.rollback()
 
     def get_ip(self):
@@ -122,7 +134,7 @@ class ProxyIp(object):
         self.con.close()
 
 
-
-
 if __name__ == '__main__':
-    pass
+    ip=ProxyIp()
+    ip.to_mysql(5,10)
+
